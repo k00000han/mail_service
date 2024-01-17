@@ -9,10 +9,11 @@ import base64
 from email.mime.text import MIMEText
 import httplib2shim
 
+from tasks import celery_service
 from token_gen import SCOPES
 
 
-# @celery_service.task
+@celery_service.task
 def send_html_email(body, email, subject, sender):
     # app = create_celery_app()
     # with app.app_context():

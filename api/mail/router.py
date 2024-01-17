@@ -7,15 +7,15 @@ from services.random_template import choose_random_file
 router = APIRouter()
 
 
-@router.post('/send-mail/', name='send_mail',)
+@router.post('/send-mail/', name='send_mail', )
 async def send_email():
     try:
         html_file = choose_random_file()
 
-        send_html_email(html_file,
-                        "test17test01test24@gmail.com",
-                        'Hi!',
-                        "test16test01test24@gmail.com")
+        send_html_email.delay(html_file,
+                              "test17test01test24@gmail.com",
+                              'Hi!',
+                              "test16test01test24@gmail.com")
 
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
     except Exception as e:
