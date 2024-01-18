@@ -1,21 +1,30 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, File, UploadFile
 from starlette.responses import JSONResponse
 
+from services.csv_loader import get_emails
 from services.mail_sender import send_html_email
 from services.random_template import choose_random_file
 
 router = APIRouter()
 
 
-@router.post('/send-mail/', name='send_mail', )
-async def send_email():
+@router.post(
+    '/send-mail/',
+    name='send_mail', )
+async def send_email(
+        sender_email: str,
+        subject: str,
+        file: UploadFile = File(...),
+):
     try:
-        html_file = choose_random_file()
+        email_list = await get_emails(file)
 
-        send_html_email.delay(html_file,
-                              "test17test01test24@gmail.com",
-                              'Hi!',
-                              "test16test01test24@gmail.com")
+        for recipient_email in email_list:
+            html_file = choose_random_file()
+            send_html_email.delay(html_file,
+                                  recipient_email,
+                                  subject,
+                                  sender_email)
 
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
     except Exception as e:
