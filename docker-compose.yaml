@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  api:
-    image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
-    container_name: fastapi
-    ports:
-      - "8000:80"
+  postgres:
+    image: postgres:15.4
     volumes:
-      - ./app:/app
-    command: [ "sh", "-c", "alembic upgrade head && uvicorn api.main:app --host 0.0.0.0 --port 8000" ]
-  celery:
-    image: celery
-    container_name: celery
-    volumes:
-      - ./app:/app
-    command: ["celery", "-A", "tasks", "worker", "--loglevel=info"]
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5
 
   redis:
-    image: "redis:alpine"
-    container_name: redis
-    ports:
-      - "6379:6379"
+    image: redis:7.0
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 1s
+      retries: 5
+
+volumes:
+  postgres_data:
