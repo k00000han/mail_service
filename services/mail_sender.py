@@ -1,5 +1,4 @@
 import os
-# from . import celery_service
 import base64
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -15,8 +14,6 @@ from token_gen import SCOPES
 
 @celery_service.task
 def send_html_email(body, email, subject, sender):
-    # app = create_celery_app()
-    # with app.app_context():
 
     httplib2shim.patch()
     creds = None

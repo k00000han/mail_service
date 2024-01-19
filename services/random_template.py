@@ -3,6 +3,11 @@ import random
 
 
 def choose_random_file():
+    """
+    This function random choose template for letter
+
+    :return: HTML markup
+    """
     directory = "/Users/air/PycharmProjects/mail_service/api/templates"
     files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
     random_file = random.choice(files)

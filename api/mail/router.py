@@ -16,6 +16,14 @@ async def send_email(
         subject: str,
         file: UploadFile = File(...),
 ):
+    """
+    This is endpoint which accepts CSV file with emails and sends mails
+
+    :param sender_email: corpotate adress
+    :param subject: letter header
+    :param file: CSV file-list of adresses
+    :return: JSONResponse
+    """
     try:
         email_list = await get_emails(file)
 
