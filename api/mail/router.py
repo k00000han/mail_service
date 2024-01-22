@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile
+from fastapi import APIRouter, HTTPException, File, UploadFile, Depends
 from starlette.responses import JSONResponse
 
+from api.auth.auth import current_active_user
 from services.csv_loader import get_emails
 from services.mail_sender import send_html_email
 from services.random_template import choose_random_file
@@ -9,7 +10,8 @@ router = APIRouter()
 
 
 @router.post(
-    '/send-mail/',
+    '/',
+    dependencies=[Depends(current_active_user)],
     name='send_mail', )
 async def send_email(
         sender_email: str,
