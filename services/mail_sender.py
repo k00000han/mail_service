@@ -1,5 +1,4 @@
 import os
-import base64
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -9,7 +8,7 @@ from email.mime.text import MIMEText
 import httplib2shim
 
 from tasks import celery_service
-from token_gen import SCOPES
+from services.token_gen import SCOPES
 
 
 @celery_service.task

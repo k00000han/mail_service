@@ -12,7 +12,8 @@ router = APIRouter()
 @router.post(
     '/',
     dependencies=[Depends(current_active_user)],
-    name='send_mail', )
+    name='send_mail',
+)
 async def send_email(
         sender_email: str,
         subject: str,
