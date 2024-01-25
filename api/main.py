@@ -3,10 +3,12 @@ from fastapi import FastAPI, Depends
 from .auth.auth import fastapi_users, auth_backend, current_active_user
 from .auth.schemas import UserRead, UserCreate
 from .mail.router import router as mail_router
+from .template.router import router as template_router
 
 app = FastAPI(title='Mail Service')
 
 app.include_router(mail_router, prefix='/send-mail', tags=['Mails'])
+app.include_router(template_router, prefix='/templates', tags=['Templates'])
 
 
 app.include_router(

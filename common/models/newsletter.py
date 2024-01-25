@@ -1,7 +1,8 @@
 import uuid
+from typing import Optional
 
-from sqlalchemy import UUID, String
-from sqlalchemy.orm import mapped_column, relationship
+from sqlalchemy import UUID, String, ForeignKey
+from sqlalchemy.orm import mapped_column, relationship, Mapped
 
 from common.models import Base
 
@@ -16,5 +17,5 @@ class Newsletter(Base):
     title = mapped_column(String(255))
     description = mapped_column(String(255))
 
-    html_template = relationship("template")
-    mailing_base = relationship("mailing_base")
+    html_template_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("html_template.id"), nullable=True)
+    mailing_base_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("mailing_base.id"), nullable=True)
