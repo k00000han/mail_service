@@ -17,3 +17,11 @@ class BaseEntitySchema(BaseModel):
 
 
 EntitySchema = TypeVar("EntitySchema", bound=BaseEntitySchema)
+
+
+class BaseQueryParams(BaseModel):
+    ...
+
+
+QueryParams = TypeVar("QueryParams", bound=BaseQueryParams)
+

@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi_pagination import add_pagination
 
 from .auth.auth import fastapi_users, auth_backend, current_active_user
 from .auth.schemas import UserRead, UserCreate
@@ -22,6 +23,8 @@ app.include_router(
     prefix="/auth",
     tags=["Auth"],
 )
+
+add_pagination(app)
 
 
 @app.get("/", dependencies=[Depends(current_active_user)])
