@@ -4,7 +4,7 @@ from typing import Generic, Callable
 from sqlalchemy import Select
 from sqlalchemy.orm import Query
 
-from services.schemas import QueryParams
+from api.schemas import QueryParams
 
 
 class BaseQueryBuilder(ABC, Generic[QueryParams]):

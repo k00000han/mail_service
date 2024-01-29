@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from common.db import get_db
-from .schemas import DbEntity, ID, EntitySchema
+from api.schemas import DbEntity, ID, EntitySchema
 
 
 class EntityService(ABC, Generic[DbEntity, EntitySchema]):

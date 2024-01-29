@@ -9,7 +9,7 @@ from api.template.query_builder import TemplateQueryBuilder
 from api.template.schemas import TemplateSchema, TemplateParams
 from api.template.service import TemplateService
 from common.db import get_db
-from services.schemas import ID
+from api.schemas import ID
 
 router = APIRouter()
 
@@ -43,7 +43,6 @@ async def get_all_templates(
         query = query.order_by(text(f"{order_by} ASC"))
 
     return await paginate(db, query)
-
 
 
 @router.get(
@@ -101,7 +100,7 @@ async def delete_template(
 
     :param pk: ID of template
     :param db_service: database methods
-    :return:
+    :return: response
     """
 
     await db_service.delete_item(pk)

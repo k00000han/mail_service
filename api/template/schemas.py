@@ -1,6 +1,6 @@
 from typing import Optional
 
-from services.schemas import BaseEntitySchema, BaseQueryParams
+from api.schemas import BaseEntitySchema, BaseQueryParams
 
 
 class TemplateParams(BaseQueryParams):
