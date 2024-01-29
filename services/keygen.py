@@ -24,9 +24,7 @@ async def keygen(db, pk):
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_dict(
-                email.credentials, SCOPES
-            )
+            flow = InstalledAppFlow.from_client_secrets_dict(email.credentials, SCOPES)
             creds = flow.run_local_server(port=0)
 
         token = creds.to_json()

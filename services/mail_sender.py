@@ -7,8 +7,8 @@ import base64
 from email.mime.text import MIMEText
 import httplib2shim
 
+from services.keygen import SCOPES
 from tasks import celery_service
-from services.token_gen import SCOPES
 
 
 @celery_service.task

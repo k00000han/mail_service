@@ -7,10 +7,10 @@ from sqlalchemy.orm import mapped_column
 from common.models import Base
 
 
-class MailingBase(Base):
+class AddressList(Base):
     """A model for mailings base"""
 
-    __tablename__ = "mailing_base"
+    __tablename__ = "address_list"
 
     id = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 

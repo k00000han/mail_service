@@ -31,11 +31,11 @@ async def create_email(
     return await db_service.create_item(object_data)
 
 
-@router.get(
+@router.post(
     '/{pk}/',
     dependencies=[Depends(current_active_user)],
 )
-async def crate_token(
+async def create_new_token(
         pk: ID,
         db_service: TokenService = Depends(TokenService),
 ):

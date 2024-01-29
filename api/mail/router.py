@@ -40,3 +40,12 @@ async def send_email(
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
     except Exception as e:
         return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
+@router.post(
+    '/',
+    dependencies=[Depends(current_active_user)],
+    name='send_email',
+)
+async def mail_sender():
+    pass

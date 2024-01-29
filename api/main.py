@@ -6,12 +6,14 @@ from .auth.schemas import UserRead, UserCreate
 from .mail.router import router as mail_router
 from .template.router import router as template_router
 from .token.router import router as token_router
+from .address_list.router import router as adddess_list_router
 
 app = FastAPI(title='Mail Service')
 
-app.include_router(mail_router, prefix='/send-mail', tags=['Mails'])
+app.include_router(adddess_list_router, prefix='/address_list', tags=['Address List'])
 app.include_router(template_router, prefix='/templates', tags=['Templates'])
 app.include_router(token_router, prefix='/tokens', tags=['Tokens'])
+app.include_router(mail_router, prefix='/send-mail', tags=['Mails'])
 
 
 app.include_router(
