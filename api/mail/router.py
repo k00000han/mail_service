@@ -8,7 +8,6 @@ from api.schemas import ID
 from api.template.router import get_template
 from api.template.service import TemplateService
 from api.token.service import TokenService
-from services.keygen import keygen
 from services.mail_sender import send_html_email
 
 router = APIRouter()
@@ -35,9 +34,9 @@ async def send_email(
     :param template_id: template to send
     :param sender_id: id of work email
     :param subject: letter header
-    :param address_list_service: DB methods
-    :param template_service:
-    :param token_service:
+    :param address_list_service: address list methods
+    :param template_service: template methods
+    :param token_service: token methods
     :return: JSONResponse
     """
 
