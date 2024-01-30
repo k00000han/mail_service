@@ -1,10 +1,15 @@
-from fastapi import APIRouter, HTTPException, File, UploadFile, Depends
+from fastapi import APIRouter, HTTPException, Depends
 from starlette.responses import JSONResponse
 
+from api.address_list.router import get_address_list
+from api.address_list.service import AddressListService
 from api.auth.auth import current_active_user
-from services.csv_loader import get_emails
+from api.schemas import ID
+from api.template.router import get_template
+from api.template.service import TemplateService
+from api.token.service import TokenService
+from services.keygen import keygen
 from services.mail_sender import send_html_email
-from services.random_template import choose_random_file
 
 router = APIRouter()
 
@@ -15,37 +20,40 @@ router = APIRouter()
     name='send_mail',
 )
 async def send_email(
-        sender_email: str,
+        address_list_id: ID,
+        template_id: ID,
+        sender_id: ID,
         subject: str,
-        file: UploadFile = File(...),
+        address_list_service: AddressListService = Depends(AddressListService),
+        template_service: TemplateService = Depends(TemplateService),
+        token_service: TokenService = Depends(TokenService),
 ):
     """
-    This is endpoint which accepts CSV file with emails and sends mails
+    This is endpoint which accepts ID of address list and sends mails
 
-    :param sender_email: corpotate adress
+    :param address_list_id: list of mail addresses
+    :param template_id: template to send
+    :param sender_id: id of work email
     :param subject: letter header
-    :param file: CSV file-list of adresses
+    :param address_list_service: DB methods
+    :param template_service:
+    :param token_service:
     :return: JSONResponse
     """
-    try:
-        email_list = await get_emails(file)
 
-        for recipient_email in email_list:
-            html_file = choose_random_file()
-            send_html_email.delay(html_file,
+    try:
+        address_list = await get_address_list(address_list_id, address_list_service)
+        template = await get_template(template_id, template_service)
+        work_email = await token_service.get_item(sender_id)
+
+        for recipient_email in address_list.content:
+            send_html_email.delay(work_email.token,
+                                  work_email.credentials,
+                                  template.html_content,
                                   recipient_email,
                                   subject,
-                                  sender_email)
+                                  work_email.email)
 
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
     except Exception as e:
         return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-
-@router.post(
-    '/',
-    dependencies=[Depends(current_active_user)],
-    name='send_email',
-)
-async def mail_sender():
-    pass

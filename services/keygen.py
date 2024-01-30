@@ -14,6 +14,7 @@ async def keygen(db, pk):
     :param pk: ID of email
     :return: response
     """
+
     creds = None
     email = await db.get_item(pk)
 
@@ -30,4 +31,3 @@ async def keygen(db, pk):
         token = creds.to_json()
 
         return token
-

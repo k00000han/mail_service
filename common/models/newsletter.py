@@ -17,5 +17,5 @@ class Newsletter(Base):
     title = mapped_column(String(255))
     description = mapped_column(String(255))
 
-    html_template_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("html_template.id"), nullable=True)
-    mailing_base_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("mailing_base.id"), nullable=True)
+    html_template_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("template.id"), nullable=True)
+    mailing_base_id: Mapped[Optional[UUID]] = mapped_column(ForeignKey("address_list.id"), nullable=True)

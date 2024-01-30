@@ -12,30 +12,31 @@ from tasks import celery_service
 
 
 @celery_service.task
-def send_html_email(body, email, subject, sender):
+def send_html_email(token,
+                    credentials,
+                    html_content,
+                    recipient_email,
+                    subject,
+                    sender_email):
 
     httplib2shim.patch()
     creds = None
 
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('/Users/air/PycharmProjects/mail_service/token.json', SCOPES)
+    if token:
+        creds = Credentials.from_authorized_user_json(token, SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                '/Users/air/PycharmProjects/mail_service/credentials.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_dict(credentials, SCOPES)
             creds = flow.run_local_server(port=0)
-
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
 
     service = build('gmail', 'v1', credentials=creds)
 
-    sender = sender
-    to = email
-    message_text = body
+    sender = sender_email
+    to = recipient_email
+    message_text = html_content
     msg = create_message(sender, to, subject, message_text)
     send_message(service, "me", msg)
 
