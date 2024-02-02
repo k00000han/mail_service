@@ -7,7 +7,7 @@ from api.auth.auth import current_active_user
 from api.schemas import ID
 from api.template.router import get_template
 from api.template.service import TemplateService
-from api.token.service import TokenService
+from api.token.service import EmailService
 from services.mail_sender import send_html_email
 
 router = APIRouter()
@@ -25,7 +25,7 @@ async def send_email(
         subject: str,
         address_list_service: AddressListService = Depends(AddressListService),
         template_service: TemplateService = Depends(TemplateService),
-        token_service: TokenService = Depends(TokenService),
+        token_service: EmailService = Depends(EmailService),
 ):
     """
     This is endpoint which accepts ID of address list and sends mails
