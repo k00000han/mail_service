@@ -11,7 +11,7 @@ from api.auth.auth import current_active_user
 from api.pagination import Page
 from api.token.query_builder import TokenQueryBuilder
 from common.db import get_db
-from services.keygen import keygen
+from services.keygen import generate_url, generate_token
 from api.token.schemas import EmailSchema, TokenSchemaParams
 from api.token.service import EmailService, TokenService
 from api.schemas import ID
@@ -52,6 +52,7 @@ async def get_all_emails(
 
 @router.post(
     '/',
+    name="create_email",
     dependencies=[Depends(current_active_user)],
 )
 async def create_email(
@@ -69,40 +70,10 @@ async def create_email(
     return await db_service.create_item(object_data)
 
 
-@router.post(
-    '/{pk}/',
-    dependencies=[Depends(current_active_user)],
-)
-async def create_new_token(
-        pk: ID,
-        db_service: TokenService = Depends(TokenService),
-):
-    """
-    Create Token Endpoint
-
-    :param pk: ID of token
-    :param db_service: database methods
-    :return: response
-    """
-
-    try:
-        token = await keygen(db_service, pk)
-
-        if token is not None:
-            token = json.loads(token)
-            await db_service.update_token(pk, token)
-
-            return JSONResponse(content={"message": "The token has been generated!"}, status_code=200)
-
-        return JSONResponse(content={"message": "Token already updated!"}, status_code=200)
-    except Exception as e:
-        return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
-
-
 @router.delete(
     '/',
-    dependencies=[Depends(current_active_user)],
     name='delete_email',
+    dependencies=[Depends(current_active_user)],
 )
 async def delete_email(
         pk: ID,
@@ -117,3 +88,57 @@ async def delete_email(
     """
 
     await db_service.delete_item(pk)
+
+
+@router.get(
+    '/{pk}/',
+    dependencies=[Depends(current_active_user)],
+)
+async def get_auth_url(
+        pk: ID,
+        db_service: TokenService = Depends(TokenService),
+):
+    """
+    Get Auth URL Endpoint
+
+    :param pk: ID of token
+    :param db_service: database methods
+    :return: response
+    """
+
+    try:
+        url = await generate_url(db_service, pk)
+
+        return url
+
+    except Exception as e:
+        return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+
+
+@router.post(
+    '/{pk}/',
+    dependencies=[Depends(current_active_user)],
+)
+async def create_new_token(
+        pk: ID,
+        code: str,
+        db_service: TokenService = Depends(TokenService),
+):
+    """
+    Create Token Endpoint
+
+    :param pk: ID of token
+    :param code: code for generate token
+    :param db_service: database methods
+    :return: response
+    """
+    try:
+        token = await generate_token(db_service, pk, code)
+
+        if token is not None:
+            token = json.loads(token)
+            await db_service.update_token(pk, token)
+
+            return JSONResponse(content={"message": "The token has been generated!"}, status_code=200)
+    except Exception as e:
+        return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")

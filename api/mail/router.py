@@ -7,7 +7,7 @@ from api.auth.auth import current_active_user
 from api.schemas import ID
 from api.template.router import get_template
 from api.template.service import TemplateService
-from api.token.service import EmailService
+from api.token.service import EmailService, TokenService
 from services.mail_sender import send_html_email
 
 router = APIRouter()
@@ -25,7 +25,7 @@ async def send_email(
         subject: str,
         address_list_service: AddressListService = Depends(AddressListService),
         template_service: TemplateService = Depends(TemplateService),
-        token_service: EmailService = Depends(EmailService),
+        token_service: TokenService = Depends(TokenService),
 ):
     """
     This is endpoint which accepts ID of address list and sends mails
@@ -45,9 +45,11 @@ async def send_email(
         template = await get_template(template_id, template_service)
         work_email = await token_service.get_item(sender_id)
 
+        if not work_email.token:
+            return JSONResponse(content={"message": "You should to generate token!"}, status_code=400)
+
         for recipient_email in address_list.content:
             send_html_email.delay(work_email.token,
-                                  work_email.credentials,
                                   template.html_content,
                                   recipient_email,
                                   subject,
