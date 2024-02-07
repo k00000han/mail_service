@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+DEBUG = os.environ.get("DEBUG", "FALSE").upper() == "TRUE"
+
 DB_URI = os.environ.get("DB_URI")
 
 if DB_URI is None:
@@ -20,3 +22,5 @@ if DB_URI is None:
     DB_URI = f"postgresql+asyncpg://{db_username}:{db_password}@{db_endpoint}/{db_name}"
 
 SECRET = os.getenv("SECRET", "SecretPhrase1!")
+
+LOG_DIR = 'logs'

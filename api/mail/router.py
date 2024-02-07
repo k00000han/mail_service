@@ -7,7 +7,8 @@ from api.auth.auth import current_active_user
 from api.schemas import ID
 from api.template.router import get_template
 from api.template.service import TemplateService
-from api.token.service import EmailService, TokenService
+from api.token.service import TokenService
+from common.utils.count_time import time_randomizer
 from services.mail_sender import send_html_email
 
 router = APIRouter()
@@ -49,12 +50,11 @@ async def send_email(
             return JSONResponse(content={"message": "You should to generate token!"}, status_code=400)
 
         for recipient_email in address_list.content:
-            send_html_email.delay(work_email.token,
-                                  template.html_content,
-                                  recipient_email,
-                                  subject,
-                                  work_email.email)
+            eta = await time_randomizer()
+
+            send_html_email.apply_async(
+                (work_email.token, template.html_content, recipient_email, subject, work_email.email), eta=eta)
 
         return JSONResponse(content={"message": "Email sent successfully"}, status_code=200)
     except Exception as e:
-        return HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")
