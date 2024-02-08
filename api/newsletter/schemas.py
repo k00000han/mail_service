@@ -1,6 +1,6 @@
 from typing import Optional, Dict
 
-from api.schemas import BaseEntitySchema, BaseQueryParams
+from api.schemas import BaseEntitySchema, BaseQueryParams, ID
 
 
 class NewslatterParams(BaseQueryParams):
@@ -19,4 +19,5 @@ class NewslatterSchema(BaseEntitySchema):
 
     title: Optional[str] = None
     description: Optional[str] = None
-    content: Optional[Dict] = None
+    html_template_id: ID
+    mailing_base_id: ID

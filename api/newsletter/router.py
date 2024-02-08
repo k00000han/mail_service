@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -63,9 +63,10 @@ async def get_newsletter(
     :return: Newsletter
     """
 
-    newsletter = await db_service.get_item(pk)
-
-    return newsletter
+    try:
+        return await db_service.get_item(pk)
+    except Exception as e:
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")
 
 
 @router.post(
@@ -84,8 +85,10 @@ async def create_newsletter(
     :param db_service: database methods
     :return: response
     """
-
-    return await db_service.create_item(object_data)
+    try:
+        return await db_service.create_item(object_data)
+    except Exception as e:
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")
 
 
 @router.delete(
@@ -104,5 +107,9 @@ async def delete_newsletter(
     :param db_service: database methods
     :return: response
     """
+    try:
+        await db_service.delete_item(pk)
 
-    await db_service.delete_item(pk)
+        return HTTPException(status_code=200, detail=f"Successfully deleted!")
+    except Exception as e:
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")

@@ -67,7 +67,10 @@ async def create_email(
     :return: response
     """
 
-    return await db_service.create_item(object_data)
+    try:
+        return await db_service.create_item(object_data)
+    except Exception as e:
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")
 
 
 @router.delete(
@@ -87,7 +90,12 @@ async def delete_email(
     :return: response
     """
 
-    await db_service.delete_item(pk)
+    try:
+        await db_service.delete_item(pk)
+
+        return HTTPException(status_code=200, detail=f"Successfully deleted!")
+    except Exception as e:
+        return HTTPException(status_code=400, detail=f"Internal Server Error: {str(e)}")
 
 
 @router.get(
