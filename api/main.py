@@ -18,6 +18,7 @@ from .users.router import router as users_router
 
 logger = get_logger(__name__)
 
+
 app = FastAPI(title='Mail Service')
 
 app.include_router(adddess_list_router, prefix='/address_list', tags=['Address List'])

@@ -1,7 +1,6 @@
 from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 
+from services.google_auth.process import CustomAppFlow, CustomCredentials
 
 SCOPES = ["https://www.googleapis.com/auth/gmail.send"]
 
@@ -19,13 +18,13 @@ async def generate_url(db, pk):
     email = await db.get_item(pk)
 
     if email.token:
-        creds = Credentials.from_authorized_user_json(email.token, SCOPES)
+        creds = CustomCredentials.from_authorized_user_json(email.token, SCOPES)
 
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_dict(email.credentials, SCOPES)
+            flow = CustomAppFlow.from_client_secrets_dict(email.credentials, SCOPES)
             creds = flow.run_url()
 
         return creds
@@ -43,7 +42,7 @@ async def generate_token(db, pk, code):
 
     email = await db.get_item(pk)
 
-    flow = InstalledAppFlow.from_client_secrets_dict(email.credentials, SCOPES)
+    flow = CustomAppFlow.from_client_secrets_dict(email.credentials, SCOPES)
     creds = flow.run_token(code)
     token = creds.to_json()
 

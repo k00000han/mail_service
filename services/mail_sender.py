@@ -1,9 +1,9 @@
 from googleapiclient.discovery import build
-from google.oauth2.credentials import Credentials
 import base64
 from email.mime.text import MIMEText
-import httplib2shim
+# import httplib2shim
 
+from services.google_auth.process import CustomCredentials
 from services.keygen import SCOPES
 from tasks import celery_service
 
@@ -15,8 +15,8 @@ def send_html_email(token,
                     subject,
                     sender_email):
 
-    httplib2shim.patch()
-    creds = Credentials.from_authorized_user_json(token, SCOPES)
+    # httplib2shim.patch()
+    creds = CustomCredentials.from_authorized_user_json(token, SCOPES)
     service = build('gmail', 'v1', credentials=creds)
 
     sender = sender_email
